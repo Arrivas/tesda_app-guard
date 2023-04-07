@@ -1,11 +1,20 @@
-import { View, Text, ScrollView, TouchableNativeFeedback } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableNativeFeedback,
+  Image,
+} from "react-native";
+import React, { useState } from "react";
 import { CheckIcon } from "react-native-heroicons/solid";
 import getDimension from "../../config/getDimension";
+import ImageModal from "./ImageModal";
 
 const SuccessComponent = ({ route, navigation }) => {
   const { res } = route.params;
   const { width, height } = getDimension();
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <View className="flex-1 bg-[#f3f5f9]">
       <View className="bg-white mx-5 mt-16 rounded-lg">
@@ -19,42 +28,23 @@ const SuccessComponent = ({ route, navigation }) => {
         {/* items */}
         <ScrollView style={{ height: height - 280 }}>
           <View className="px-5 py-5">
-            <Text className="px-2 text-lg my-2 font-light">
-              Borrower Information
-            </Text>
-            <View className="px-5 mt-2">
-              <View className="flex-row">
-                <Text className="font-bold flex-1">Borrower Name</Text>
-                <Text className="text-gray-600 flex-1 text-right">
-                  {res.fullName}
-                </Text>
-              </View>
-            </View>
-            <View className="px-5 mt-2">
-              <View className="flex-row">
-                <Text className="font-bold flex-1">Purpose</Text>
-                <Text className="text-gray-600 flex-1 text-right">
-                  {res.purpose}
-                </Text>
-              </View>
-            </View>
-            <View className="px-5 mt-2">
-              <View className="flex-row">
-                <Text className="font-bold flex-1">Role</Text>
-                <Text className="text-gray-600 flex-1 text-right">
-                  {res.role}
-                </Text>
-              </View>
-            </View>
+            {res?.image.imageUrl && (
+              <ImageModal
+                source={res?.image.imageUrl}
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+              />
+            )}
+
             {/* equipment */}
             <Text className="px-2 text-lg my-2 font-light">
               Equipment Information
             </Text>
             <View className="px-5 mt-2">
               <View className="flex-row">
-                <Text className="font-bold flex-1">Qty</Text>
+                <Text className="font-bold flex-1">Property Number</Text>
                 <Text className="text-gray-600 flex-1 text-right">
-                  {res.qty}
+                  {res.propertyNo}
                 </Text>
               </View>
             </View>
@@ -68,20 +58,74 @@ const SuccessComponent = ({ route, navigation }) => {
             </View>
             <View className="px-5 mt-2">
               <View className="flex-row">
-                <Text className="font-bold flex-1">Condition</Text>
+                <Text className="font-bold flex-1">Qty</Text>
                 <Text className="text-gray-600 flex-1 text-right">
-                  {res.condition}
+                  {res.qty}
                 </Text>
               </View>
             </View>
-            <View className="px-5 mt-2">
-              <View className="flex-row">
-                <Text className="font-bold flex-1">Location</Text>
-                <Text className="text-gray-600 flex-1 text-right">
-                  {res.location}
-                </Text>
+            {res?.condition && (
+              <View className="px-5 mt-2">
+                <View className="flex-row">
+                  <Text className="font-bold flex-1">Condition</Text>
+                  <Text className="text-gray-600 flex-1 text-right">
+                    {res.condition}
+                  </Text>
+                </View>
               </View>
-            </View>
+            )}
+            {res?.location && (
+              <View className="px-5 mt-2">
+                <View className="flex-row">
+                  <Text className="font-bold flex-1">Location</Text>
+                  <Text className="text-gray-600 flex-1 text-right">
+                    {res.location}
+                  </Text>
+                </View>
+              </View>
+            )}
+            {res?.specificLocation && (
+              <View className="px-5 mt-2">
+                <View className="flex-row">
+                  <Text className="font-bold flex-1">Specific Location</Text>
+                  <Text className="text-gray-600 flex-1 text-right">
+                    {res.specificLocation}
+                  </Text>
+                </View>
+              </View>
+            )}
+            {/* borrower */}
+            {res?.borrowerName && (
+              <>
+                <Text className="px-2 text-lg my-2 font-light">
+                  Borrower Information
+                </Text>
+                <View className="px-5 mt-2">
+                  <View className="flex-row">
+                    <Text className="font-bold flex-1">Borrower Name</Text>
+                    <Text className="text-gray-600 flex-1 text-right">
+                      {res.fullName}
+                    </Text>
+                  </View>
+                </View>
+                <View className="px-5 mt-2">
+                  <View className="flex-row">
+                    <Text className="font-bold flex-1">Role</Text>
+                    <Text className="text-gray-600 flex-1 text-right">
+                      {res.role}
+                    </Text>
+                  </View>
+                </View>
+                <View className="px-5 mt-2">
+                  <View className="flex-row">
+                    <Text className="font-bold flex-1">Purpose</Text>
+                    <Text className="text-gray-600 flex-1 text-right">
+                      {res.purpose}
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )}
           </View>
         </ScrollView>
       </View>

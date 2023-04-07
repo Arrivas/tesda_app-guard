@@ -3,9 +3,14 @@ import {
   Text,
   TouchableNativeFeedback,
   ToastAndroid,
+  Image,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { QrCodeIcon } from "react-native-heroicons/solid";
+import {
+  QrCodeIcon,
+  ArrowLeftOnRectangleIcon,
+} from "react-native-heroicons/solid";
 import store from "../../config/store";
 import DialogComponent from "./dialog/DialogComponent";
 
@@ -74,21 +79,28 @@ const HomeComponent = ({ navigation }) => {
                 </View>
               </View>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={() => BackHandler.exitApp()}>
               <View className="bg-white  p-5 self-start rounded-lg flex-1 m-1">
                 <View className="rounded-full bg-black h-[60px] w-[60px] items-center justify-center">
-                  <QrCodeIcon size={34} color="white" />
+                  <ArrowLeftOnRectangleIcon size={34} color="white" />
                 </View>
                 <View className="mt-5">
-                  <Text className="font-semibold text-lg">Asadasda</Text>
-                  <Text className="font-semibold text-xs">asdasd</Text>
+                  <Text className="font-semibold text-lg">Exit</Text>
+                  <Text className="font-semibold text-xs">exit app</Text>
                 </View>
               </View>
             </TouchableNativeFeedback>
           </View>
         </View>
         <View className="flex-1">
-          <Text>asd asd asdasd</Text>
+          {/* <Image
+            source={require("../../img/tesda_logo.png")}
+            className="h-[150px] w-[150px]"
+          />
+          <Image
+            source={require("../../img/logo_bin.png")}
+            className="h-[150px] w-[150px]"
+          /> */}
         </View>
       </View>
       {/* dialog */}

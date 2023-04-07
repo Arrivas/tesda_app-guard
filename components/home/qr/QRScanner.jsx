@@ -8,6 +8,7 @@ import {
   ToastAndroid,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { create } from "apisauce";
 
 const QRScanner = ({ route, navigation }) => {
   const { currentIP } = route.params;
@@ -24,19 +25,32 @@ const QRScanner = ({ route, navigation }) => {
     getBarCodeScannerPermissions();
   }, []);
 
+  const api = create({
+    baseURL: `${currentIP}`,
+  });
+
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
     if (!data) return;
-    await fetch(`${currentIP}borrow/get/one/${data}`)
-      .then((res) => res.json())
-      .then((res) => {
-        navigation.navigate("Success", { res });
-      })
-      .catch((err) =>
-        ToastAndroid.show("FATAL ERROR: unable to get data", ToastAndroid.SHORT)
-      );
+    const [response1, response2] = await Promise.all([
+      api.get(`/borrow/get/one/${data}`),
+      api.get(`/inventory/get/one/${data}`),
+    ]);
+
+    if (response1.ok || response2.ok) {
+      const res = response1.data !== null ? response1.data : response2.data;
+
+      // Do something with the data
+      res !== null && navigation.navigate("Success", { res });
+    } else {
+      // Handle errors
+    }
   };
 
+  // ToastAndroid.show(
+  //   "FATAL ERROR: unable to get data",
+  //   ToastAndroid.SHORT
+  // )
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
   }

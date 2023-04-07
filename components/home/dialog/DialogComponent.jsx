@@ -20,10 +20,6 @@ const DialogComponent = ({
         onChangeText={handleInputChange}
         value={inputValue}
       />
-      <Dialog.Button
-        label="Cancel"
-        onPress={() => setDialogVisible(!dialogVisible)}
-      />
       <Dialog.Button label="Save" onPress={handleSave} />
     </Dialog.Container>
   );
