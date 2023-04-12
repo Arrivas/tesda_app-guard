@@ -28,12 +28,16 @@ const SuccessComponent = ({ route, navigation }) => {
         {/* items */}
         <ScrollView style={{ height: height - 280 }}>
           <View className="px-5 py-5">
-            {res?.image.imageUrl && (
+            {res?.image?.imageUrl ? (
               <ImageModal
                 source={res?.image.imageUrl}
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
               />
+            ) : (
+              <Text className="self-center my-5 text-gray-300">
+                Image Unavailable
+              </Text>
             )}
 
             {/* equipment */}
@@ -95,7 +99,7 @@ const SuccessComponent = ({ route, navigation }) => {
               </View>
             )}
             {/* borrower */}
-            {res?.borrowerName && (
+            {res?.fullName && (
               <>
                 <Text className="px-2 text-lg my-2 font-light">
                   Borrower Information

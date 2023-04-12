@@ -29,6 +29,12 @@ const QRScanner = ({ route, navigation }) => {
     baseURL: `${currentIP}`,
   });
 
+  const fetchImage = async (itemId) => {
+    if (!itemId) return;
+    const result = await api.get(`/images/url/${itemId}`);
+    return result.data;
+  };
+
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
     if (!data) return;
@@ -36,10 +42,13 @@ const QRScanner = ({ route, navigation }) => {
       api.get(`/borrow/get/one/${data}`),
       api.get(`/inventory/get/one/${data}`),
     ]);
-
+    const imageId = response1?.data?.image?.imageId
+      ? response1?.data?.image?._id
+      : response2?.data?.image?._id;
+    const image = await fetchImage(imageId);
     if (response1.ok || response2.ok) {
-      const res = response1.data !== null ? response1.data : response2.data;
-
+      const res = response1.data !== null ? response1?.data : response2?.data;
+      res.image.imageUrl = image;
       // Do something with the data
       res !== null && navigation.navigate("Success", { res });
     } else {
