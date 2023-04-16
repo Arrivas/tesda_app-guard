@@ -19,48 +19,78 @@ const HomeComponent = ({ navigation }) => {
   const [inputValue, setInputValue] = useState("");
   const [currentIP, setCurrentIP] = useState("");
 
-  const getIP = async () => {
-    const ip = await store.getId();
-    await fetch(ip)
-      .then((res) => {
-        setCurrentIP(ip);
-        setDialogVisible(false);
-      })
-      .catch((err) => {
-        setDialogVisible(true);
-        ToastAndroid.show(
-          "Connection Failed: Provide another ip address and port",
-          ToastAndroid.SHORT
-        );
-      });
-    if (!ip) return setDialogVisible(true);
-  };
-
   useEffect(() => {
-    let ready = true;
-    if (ready) {
+    let isMounted = true;
+    if (isMounted) {
       getIP();
     }
     return () => {
-      ready = false;
+      isMounted = false;
     };
   }, []);
 
-  const handleSaveIP = async () => {
-    if (!inputValue) return;
-    await fetch(`http://${inputValue}/`)
-      .then((res) => {
-        setCurrentIP(`http://${inputValue}/`);
-        store.storeIp(`http://${inputValue}/`);
-        setDialogVisible(false);
+  const getIP = async () => {
+    const ip = await store.getId();
+    if (!ip) {
+      setDialogVisible(true);
+      return;
+    }
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const timeout = setTimeout(() => {
+      controller.abort();
+      setDialogVisible(true);
+      ToastAndroid.show(
+        "Connection Failed: Provide another IP address and port",
+        ToastAndroid.SHORT
+      );
+    }, 1000);
+    await fetch(ip, { signal })
+      .then((response) => {
+        clearTimeout(timeout);
+        if (response.status === 200) {
+          setCurrentIP(ip);
+          setDialogVisible(false);
+        } else {
+          setDialogVisible(true);
+          ToastAndroid.show(
+            "Connection Failed: Provide another IP address and port",
+            ToastAndroid.SHORT
+          );
+        }
       })
-      .catch((err) => {
+      .catch((error) => {
+        clearTimeout(timeout);
+        setDialogVisible(true);
         ToastAndroid.show(
-          "Connection Failed: Provide another ip address and port",
+          "Connection Failed: Provide another IP address and port",
           ToastAndroid.SHORT
         );
       });
   };
+
+  const handleSaveIP = async () => {
+    if (!inputValue) return;
+    try {
+      const res = await fetch(`http://${inputValue}/`);
+      if (res.status === 200) {
+        setCurrentIP(`http://${inputValue}/`);
+        store.storeIp(`http://${inputValue}/`);
+        setDialogVisible(false);
+      } else {
+        ToastAndroid.show(
+          "Connection Failed: Provide another ip address and port",
+          ToastAndroid.SHORT
+        );
+      }
+    } catch (err) {
+      ToastAndroid.show(
+        "Connection Failed: Provide another ip address and port",
+        ToastAndroid.SHORT
+      );
+    }
+  };
+
   return (
     <>
       <View className="flex-1 bg-white">
