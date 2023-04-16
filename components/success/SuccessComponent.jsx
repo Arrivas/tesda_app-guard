@@ -11,7 +11,7 @@ import getDimension from "../../config/getDimension";
 import ImageModal from "./ImageModal";
 
 const SuccessComponent = ({ route, navigation }) => {
-  const { res } = route.params;
+  const { fetchedData } = route.params;
   const { width, height } = getDimension();
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -23,14 +23,14 @@ const SuccessComponent = ({ route, navigation }) => {
         </View>
         <View className="self-center relative -top-6">
           <Text className="font-bold text-2xl">Scanned Successfully</Text>
-          <Text className="text-gray-600 self-center">{res._id}</Text>
+          <Text className="text-gray-600 self-center">{fetchedData._id}</Text>
         </View>
         {/* items */}
         <ScrollView style={{ height: height - 280 }}>
           <View className="px-5 py-5">
-            {res?.image?.imageUrl ? (
+            {fetchedData?.image?.imageUrl ? (
               <ImageModal
-                source={res?.image.imageUrl}
+                source={fetchedData?.image?.imageUrl}
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
               />
@@ -48,7 +48,7 @@ const SuccessComponent = ({ route, navigation }) => {
               <View className="flex-row">
                 <Text className="font-bold flex-1">Property Number</Text>
                 <Text className="text-gray-600 flex-1 text-right">
-                  {res.propertyNo}
+                  {fetchedData.propertyNo}
                 </Text>
               </View>
             </View>
@@ -56,7 +56,7 @@ const SuccessComponent = ({ route, navigation }) => {
               <View className="flex-row">
                 <Text className="font-bold flex-1">Equipment</Text>
                 <Text className="text-gray-600 flex-1 text-right">
-                  {res.equipment}
+                  {fetchedData.equipment}
                 </Text>
               </View>
             </View>
@@ -64,42 +64,42 @@ const SuccessComponent = ({ route, navigation }) => {
               <View className="flex-row">
                 <Text className="font-bold flex-1">Qty</Text>
                 <Text className="text-gray-600 flex-1 text-right">
-                  {res.qty}
+                  {fetchedData.qty}
                 </Text>
               </View>
             </View>
-            {res?.condition && (
+            {fetchedData?.condition && (
               <View className="px-5 mt-2">
                 <View className="flex-row">
                   <Text className="font-bold flex-1">Condition</Text>
                   <Text className="text-gray-600 flex-1 text-right">
-                    {res.condition}
+                    {fetchedData.condition}
                   </Text>
                 </View>
               </View>
             )}
-            {res?.location && (
+            {fetchedData?.location && (
               <View className="px-5 mt-2">
                 <View className="flex-row">
                   <Text className="font-bold flex-1">Location</Text>
                   <Text className="text-gray-600 flex-1 text-right">
-                    {res.location}
+                    {fetchedData.location}
                   </Text>
                 </View>
               </View>
             )}
-            {res?.specificLocation && (
+            {fetchedData?.specificLocation && (
               <View className="px-5 mt-2">
                 <View className="flex-row">
                   <Text className="font-bold flex-1">Specific Location</Text>
                   <Text className="text-gray-600 flex-1 text-right">
-                    {res.specificLocation}
+                    {fetchedData.specificLocation}
                   </Text>
                 </View>
               </View>
             )}
             {/* borrower */}
-            {res?.fullName && (
+            {fetchedData?.fullName && (
               <>
                 <Text className="px-2 text-lg my-2 font-light">
                   Borrower Information
@@ -108,7 +108,7 @@ const SuccessComponent = ({ route, navigation }) => {
                   <View className="flex-row">
                     <Text className="font-bold flex-1">Borrower Name</Text>
                     <Text className="text-gray-600 flex-1 text-right">
-                      {res.fullName}
+                      {fetchedData.fullName}
                     </Text>
                   </View>
                 </View>
@@ -116,7 +116,7 @@ const SuccessComponent = ({ route, navigation }) => {
                   <View className="flex-row">
                     <Text className="font-bold flex-1">Role</Text>
                     <Text className="text-gray-600 flex-1 text-right">
-                      {res.role}
+                      {fetchedData.role}
                     </Text>
                   </View>
                 </View>
@@ -124,7 +124,7 @@ const SuccessComponent = ({ route, navigation }) => {
                   <View className="flex-row">
                     <Text className="font-bold flex-1">Purpose</Text>
                     <Text className="text-gray-600 flex-1 text-right">
-                      {res.purpose}
+                      {fetchedData.purpose}
                     </Text>
                   </View>
                 </View>

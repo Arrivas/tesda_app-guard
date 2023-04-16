@@ -1,98 +1,98 @@
-import React, { useState, useEffect } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  TouchableNativeFeedback,
-  ToastAndroid,
-} from "react-native";
-import { BarCodeScanner } from "expo-barcode-scanner";
+import React, { useState, useEffect, useRef } from "react";
+import { Text, View, TouchableNativeFeedback } from "react-native";
+import { Camera } from "expo-camera";
+import getDimensions from "../../../config/getDimension";
 import { create } from "apisauce";
+import { useIsFocused } from "@react-navigation/native";
 
-const QRScanner = ({ route, navigation }) => {
+const QRCodeScanner = ({ route, navigation }) => {
   const { currentIP } = route.params;
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [fetchedBorrow, setFetchedBorrow] = useState({});
-
-  useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    };
-
-    getBarCodeScannerPermissions();
-  }, []);
+  const [scanning, setScanning] = useState(true);
+  const { height } = getDimensions();
+  const isFocused = useIsFocused();
 
   const api = create({
     baseURL: `${currentIP}`,
   });
 
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
   const fetchImage = async (itemId) => {
-    if (!itemId) return;
     const result = await api.get(`/images/url/${itemId}`);
-    return result.data;
+    if (!result.ok) return null;
+    return result?.data;
   };
 
   const handleBarCodeScanned = async ({ type, data }) => {
-    if (!data) return;
-    const [response1, response2] = await Promise.all([
-      api.get(`/borrow/get/one/${data}`),
-      api.get(`/inventory/get/one/${data}`),
-    ]);
-    const imageId = response1?.data?.image?._id
-      ? response1?.data?.image?._id
-      : response2?.data?.image?._id;
-    const image = await fetchImage(imageId);
-    if (response1.ok || response2.ok) {
-      const res = response1.data !== null ? response1?.data : response2?.data;
-      if (!res.image) return navigation.navigate("Success", { res });
-      res.image.imageUrl = image;
-      // Do something with the data
-      res !== null && navigation.navigate("Success", { res });
-    } else {
-      // Handle errors
+    setScanning(false);
+    try {
+      const response1 = await api.get(`/borrow/get/one/${data}`);
+      if (response1.ok && response1.data) {
+        const fetchedData = response1.data;
+        const imageId = fetchedData?.image?._id;
+        const image = await fetchImage(imageId);
+        fetchedData.image = { ...fetchedData.image, imageUrl: image };
+        navigation.navigate("Success", { fetchedData });
+      } else {
+        const response2 = await api.get(`/inventory/get/one/${data}`);
+        if (response2.ok && response2.data) {
+          const fetchedData = response2.data;
+          const imageId = fetchedData?.image?._id;
+          const image = await fetchImage(imageId);
+          fetchedData.image = { ...fetchedData.image, imageUrl: image };
+          navigation.navigate("Success", { fetchedData });
+        } else {
+          console.log("Error: No response data");
+        }
+      }
+    } catch (error) {
+      console.log(`Error: ${error}`);
     }
   };
 
-  // ToastAndroid.show(
-  //   "FATAL ERROR: unable to get data",
-  //   ToastAndroid.SHORT
-  // )
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
   }
+
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
 
   return (
-    <View className="flex-1 flex-col">
-      <View
-        style={{
-          flex: 4,
-        }}
-      >
-        <BarCodeScanner
-          className="flex-1"
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={StyleSheet.absoluteFillObject}
-        />
-      </View>
-      {scanned && (
-        <View className=" items-center justify-center w-full flex-1 ">
-          <TouchableNativeFeedback onPress={() => setScanned(false)}>
-            <View className="w-[80%] bg-[#0035a9] items-center py-3 rounded-xl">
-              <Text className="font-semibold text-white">
-                Tap to Scan Again
-              </Text>
+    <>
+      {isFocused && (
+        <View className="bg-black flex-1">
+          <Camera
+            className="flex-1"
+            type={Camera.Constants.Type.back}
+            onBarCodeScanned={scanning ? handleBarCodeScanned : undefined}
+          />
+          {!scanning && (
+            <View
+              className="absolute self-center items-center justify-center w-full flex-1 "
+              style={{
+                bottom: height - 750,
+              }}
+            >
+              <TouchableNativeFeedback onPress={() => setScanning(true)}>
+                <View className="w-[80%] bg-[#0035a9] items-center py-3 rounded-xl">
+                  <Text className="font-semibold text-white">
+                    Tap to Scan Again
+                  </Text>
+                </View>
+              </TouchableNativeFeedback>
             </View>
-          </TouchableNativeFeedback>
+          )}
         </View>
       )}
-    </View>
+    </>
   );
 };
 
-export default QRScanner;
+export default QRCodeScanner;

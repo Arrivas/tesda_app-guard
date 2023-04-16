@@ -44,7 +44,7 @@ const HomeComponent = ({ navigation }) => {
         "Connection Failed: Provide another IP address and port",
         ToastAndroid.SHORT
       );
-    }, 1000);
+    }, 3000);
     await fetch(ip, { signal })
       .then((response) => {
         clearTimeout(timeout);
