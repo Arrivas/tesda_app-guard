@@ -24,6 +24,7 @@ const QRCodeScanner = ({ route, navigation }) => {
   }, []);
 
   const fetchImage = async (itemId) => {
+    if (!itemId) return null;
     const result = await api.get(`/images/url/${itemId}`);
     if (!result.ok) return null;
     return result?.data;
@@ -68,11 +69,13 @@ const QRCodeScanner = ({ route, navigation }) => {
     <>
       {isFocused && (
         <View className="bg-black flex-1">
-          <Camera
-            className="flex-1"
-            type={Camera.Constants.Type.back}
-            onBarCodeScanned={scanning ? handleBarCodeScanned : undefined}
-          />
+          <View className="h-[500px] w-[500px]">
+            <Camera
+              className="flex-1"
+              type={Camera.Constants.Type.back}
+              onBarCodeScanned={scanning ? handleBarCodeScanned : undefined}
+            />
+          </View>
           {!scanning && (
             <View
               className="absolute self-center items-center justify-center w-full flex-1 "
