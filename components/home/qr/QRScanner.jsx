@@ -69,7 +69,11 @@ const QRCodeScanner = ({ route, navigation }) => {
     <>
       {isFocused && (
         <View className="bg-black flex-1">
-          <View className="h-[500px] w-[500px]">
+          <View
+            style={{
+              flex: 2,
+            }}
+          >
             <Camera
               className="flex-1"
               type={Camera.Constants.Type.back}
@@ -78,9 +82,9 @@ const QRCodeScanner = ({ route, navigation }) => {
           </View>
           {!scanning && (
             <View
-              className="absolute self-center items-center justify-center w-full flex-1 "
+              className="self-center items-center justify-center w-full"
               style={{
-                bottom: height - 750,
+                flex: 0.5,
               }}
             >
               <TouchableNativeFeedback onPress={() => setScanning(true)}>

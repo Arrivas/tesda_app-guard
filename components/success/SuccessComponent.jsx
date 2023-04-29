@@ -15,6 +15,14 @@ const SuccessComponent = ({ route, navigation }) => {
   const { width, height } = getDimension();
   const [modalVisible, setModalVisible] = useState(false);
 
+  const formatAsCurrency = (value) => {
+    const formatter = new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    });
+
+    return formatter.format(value);
+  };
   return (
     <View className="flex-1 bg-[#f3f5f9]">
       <View className="bg-white mx-5 mt-16 rounded-lg">
@@ -74,6 +82,36 @@ const SuccessComponent = ({ route, navigation }) => {
                   <Text className="font-bold flex-1">Condition</Text>
                   <Text className="text-gray-600 flex-1 text-right">
                     {fetchedData.condition}
+                  </Text>
+                </View>
+              </View>
+            )}
+            {fetchedData?.unit && (
+              <View className="px-5 mt-2">
+                <View className="flex-row">
+                  <Text className="font-bold flex-1">Unit</Text>
+                  <Text className="text-gray-600 flex-1 text-right">
+                    {fetchedData.unit}
+                  </Text>
+                </View>
+              </View>
+            )}
+            {fetchedData?.amount && (
+              <View className="px-5 mt-2">
+                <View className="flex-row">
+                  <Text className="font-bold flex-1">Amount</Text>
+                  <Text className="text-gray-600 flex-1 text-right">
+                    {formatAsCurrency(fetchedData.amount)}
+                  </Text>
+                </View>
+              </View>
+            )}
+            {fetchedData?.classification && (
+              <View className="px-5 mt-2">
+                <View className="flex-row">
+                  <Text className="font-bold flex-1">Classification</Text>
+                  <Text className="text-gray-600 flex-1 text-right">
+                    {fetchedData.classification}
                   </Text>
                 </View>
               </View>
