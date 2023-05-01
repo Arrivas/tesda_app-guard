@@ -116,6 +116,16 @@ const SuccessComponent = ({ route, navigation }) => {
                 </View>
               </View>
             )}
+            {fetchedData?.receiveBy && (
+              <View className="px-5 mt-2">
+                <View className="flex-row">
+                  <Text className="font-bold flex-1">Receive By</Text>
+                  <Text className="text-gray-600 flex-1 text-right">
+                    {fetchedData.receiveBy}
+                  </Text>
+                </View>
+              </View>
+            )}
             {fetchedData?.location && (
               <View className="px-5 mt-2">
                 <View className="flex-row">
