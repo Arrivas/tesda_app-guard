@@ -16,6 +16,7 @@ const SuccessComponent = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const formatAsCurrency = (value) => {
+    if (value === 0) return "0";
     const formatter = new Intl.NumberFormat("en-PH", {
       style: "currency",
       currency: "PHP",
@@ -23,6 +24,7 @@ const SuccessComponent = ({ route, navigation }) => {
 
     return formatter.format(value);
   };
+
   return (
     <View className="flex-1 bg-[#f3f5f9]">
       <View className="bg-white mx-5 mt-16 rounded-lg">
@@ -96,12 +98,19 @@ const SuccessComponent = ({ route, navigation }) => {
                 </View>
               </View>
             )}
-            {fetchedData?.amount && (
+            {fetchedData?.amount === 0 ? (
+              <View className="px-5 mt-2">
+                <View className="flex-row">
+                  <Text className="font-bold flex-1">Amount</Text>
+                  <Text className="text-gray-600 flex-1 text-right">0</Text>
+                </View>
+              </View>
+            ) : (
               <View className="px-5 mt-2">
                 <View className="flex-row">
                   <Text className="font-bold flex-1">Amount</Text>
                   <Text className="text-gray-600 flex-1 text-right">
-                    {formatAsCurrency(fetchedData.amount)}
+                    {formatAsCurrency(item.amount)}
                   </Text>
                 </View>
               </View>
