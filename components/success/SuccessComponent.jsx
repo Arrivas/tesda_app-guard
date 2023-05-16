@@ -24,7 +24,6 @@ const SuccessComponent = ({ route, navigation }) => {
 
     return formatter.format(value);
   };
-
   return (
     <View className="flex-1 bg-[#f3f5f9]">
       <View className="bg-white mx-5 mt-16 rounded-lg">
@@ -98,6 +97,7 @@ const SuccessComponent = ({ route, navigation }) => {
                 </View>
               </View>
             )}
+
             {fetchedData?.amount === 0 ? (
               <View className="px-5 mt-2">
                 <View className="flex-row">
@@ -105,12 +105,14 @@ const SuccessComponent = ({ route, navigation }) => {
                   <Text className="text-gray-600 flex-1 text-right">0</Text>
                 </View>
               </View>
+            ) : fetchedData?.amount === undefined ? (
+              <></>
             ) : (
               <View className="px-5 mt-2">
                 <View className="flex-row">
                   <Text className="font-bold flex-1">Amount</Text>
                   <Text className="text-gray-600 flex-1 text-right">
-                    {formatAsCurrency(item.amount)}
+                    {formatAsCurrency(fetchedData.amount)}
                   </Text>
                 </View>
               </View>
@@ -155,6 +157,16 @@ const SuccessComponent = ({ route, navigation }) => {
                 </View>
               </View>
             )}
+
+            <View className="px-5 mt-2">
+              <View className="flex-row">
+                <Text className="font-bold flex-1">Status</Text>
+                <Text className="text-gray-600 flex-1 text-right">
+                  {fetchedData?.isBorrowed ? "Borrowed" : "Returned"}
+                </Text>
+              </View>
+            </View>
+
             {/* borrower */}
             {fetchedData?.fullName && (
               <>

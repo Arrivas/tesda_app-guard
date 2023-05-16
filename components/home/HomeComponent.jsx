@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import {
   QrCodeIcon,
   ArrowLeftOnRectangleIcon,
+  CheckIcon,
 } from "react-native-heroicons/solid";
 import store from "../../config/store";
 import DialogComponent from "./dialog/DialogComponent";
@@ -95,11 +96,13 @@ const HomeComponent = ({ navigation }) => {
     <>
       <View className="flex-1 bg-white">
         <View className="flex-1">
-          <View className="m-2 flex-row flex ">
+          <View className="m-2 flex-row flex-1 w-full flex-wrap ">
             <TouchableNativeFeedback
-              onPress={() => navigation.navigate("QRScanner", { currentIP })}
+              onPress={() =>
+                navigation.navigate("QRScanner", { currentIP, mode: "scan" })
+              }
             >
-              <View className="bg-[#F2F2F2] p-5 self-start rounded-lg flex-1 m-1">
+              <View className="bg-[#F2F2F2] p-5 self-start rounded-lg  m-1 w-[45%]">
                 <View className="rounded-full bg-[#0035a9] h-[60px] w-[60px] items-center justify-center">
                   <QrCodeIcon size={34} color="white" />
                 </View>
@@ -109,8 +112,25 @@ const HomeComponent = ({ navigation }) => {
                 </View>
               </View>
             </TouchableNativeFeedback>
+            <TouchableNativeFeedback
+              onPress={() =>
+                navigation.navigate("QRScanner", { currentIP, mode: "return" })
+              }
+            >
+              <View className="bg-[#F2F2F2] p-5 self-start rounded-lg w-[45%] m-1">
+                <View className="rounded-full bg-green-700 h-[60px] w-[60px] items-center justify-center">
+                  <CheckIcon size={34} color="white" />
+                </View>
+                <View className="mt-5">
+                  <Text className="font-semibold text-lg">Return Scan </Text>
+                  <Text className="font-semibold text-xs">
+                    return scan qr code
+                  </Text>
+                </View>
+              </View>
+            </TouchableNativeFeedback>
             <TouchableNativeFeedback onPress={() => BackHandler.exitApp()}>
-              <View className="bg-white  p-5 self-start rounded-lg flex-1 m-1">
+              <View className="bg-white  p-5 self-start rounded-lg w-[45%] m-1">
                 <View className="rounded-full bg-black h-[60px] w-[60px] items-center justify-center">
                   <ArrowLeftOnRectangleIcon size={34} color="white" />
                 </View>

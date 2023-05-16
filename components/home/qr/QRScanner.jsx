@@ -6,10 +6,9 @@ import { create } from "apisauce";
 import { useIsFocused } from "@react-navigation/native";
 
 const QRCodeScanner = ({ route, navigation }) => {
-  const { currentIP } = route.params;
+  const { currentIP, mode } = route.params;
   const [hasPermission, setHasPermission] = useState(null);
   const [scanning, setScanning] = useState(true);
-  const { height } = getDimensions();
   const isFocused = useIsFocused();
 
   const api = create({
@@ -32,28 +31,43 @@ const QRCodeScanner = ({ route, navigation }) => {
 
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanning(false);
-    try {
-      const response1 = await api.get(`/borrow/get/one/${data}`);
-      if (response1.ok && response1.data) {
-        const fetchedData = response1.data;
-        const imageId = fetchedData?.image?._id;
-        const image = await fetchImage(imageId);
-        fetchedData.image = { ...fetchedData.image, imageUrl: image };
-        navigation.navigate("Success", { fetchedData });
-      } else {
-        const response2 = await api.get(`/inventory/get/one/${data}`);
-        if (response2.ok && response2.data) {
-          const fetchedData = response2.data;
+    if (mode === "scan") {
+      try {
+        const response1 = await api.get(`/borrow/get/one/${data}`);
+        if (response1.ok && response1.data) {
+          const fetchedData = response1.data;
           const imageId = fetchedData?.image?._id;
           const image = await fetchImage(imageId);
           fetchedData.image = { ...fetchedData.image, imageUrl: image };
           navigation.navigate("Success", { fetchedData });
         } else {
-          console.log("Error: No response data");
+          const response2 = await api.get(`/inventory/get/one/${data}`);
+          if (response2.ok && response2.data) {
+            const fetchedData = response2.data;
+            const imageId = fetchedData?.image?._id;
+            const image = await fetchImage(imageId);
+            fetchedData.image = { ...fetchedData.image, imageUrl: image };
+            navigation.navigate("Success", { fetchedData });
+          } else {
+            console.log("Error: No response data");
+          }
         }
+      } catch (error) {
+        console.log(`Error: ${error}`);
       }
-    } catch (error) {
-      console.log(`Error: ${error}`);
+    } else {
+      try {
+        const returned = await api.put(`/borrow/returned/${data}`);
+        if (returned.ok && returned.data) {
+          const fetchedData = returned.data;
+          const imageId = fetchedData?.image?._id;
+          const image = await fetchImage(imageId);
+          fetchedData.image = { ...fetchedData.image, imageUrl: image };
+          navigation.navigate("Success", { fetchedData });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
